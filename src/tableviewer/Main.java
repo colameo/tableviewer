@@ -1,13 +1,10 @@
 package tableviewer;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
-import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -32,36 +29,8 @@ public class Main {
 		}
 	}
 
-	protected abstract class AbstractEditingSupport extends EditingSupport {
-		private TextCellEditor editor;
-
-		public AbstractEditingSupport(TableViewer viewer) {
-			super(viewer);
-			this.editor = new TextCellEditor(viewer.getTable());
-		}
-
-		@Override
-		protected boolean canEdit(Object element) {
-			return true;
-		}
-
-		@Override
-		protected CellEditor getCellEditor(Object element) {
-			return editor;
-		}
-
-		@Override
-		protected void setValue(Object element, Object value) {
-			doSetValue(element, value);
-			getViewer().update(element, null);
-		}
-
-		protected abstract void doSetValue(Object element, Object value);
-	}
-
 	public Main(Shell shell) {
-		TableViewer viewer = new TableViewer(shell, SWT.BORDER
-				| SWT.FULL_SELECTION);
+		TableViewer viewer = new TableViewer(shell, SWT.BORDER | SWT.FULL_SELECTION);
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		TableViewerColumn column = createColumnFor(viewer, "Givenname");
@@ -71,20 +40,6 @@ public class Main {
 			public String getText(Object element) {
 				return ((Person) element).givenname;
 			}
-		});
-
-		column.setEditingSupport(new AbstractEditingSupport(viewer) {
-
-			@Override
-			protected Object getValue(Object element) {
-				return ((Person) element).givenname;
-			}
-
-			@Override
-			protected void doSetValue(Object element, Object value) {
-				((Person) element).givenname = value.toString();
-			}
-
 		});
 
 		ColumnViewerComparator cSorter = new ColumnViewerComparator(viewer, column) {
@@ -108,20 +63,6 @@ public class Main {
 
 		});
 
-		column.setEditingSupport(new AbstractEditingSupport(viewer) {
-
-			@Override
-			protected Object getValue(Object element) {
-				return ((Person) element).surname;
-			}
-
-			@Override
-			protected void doSetValue(Object element, Object value) {
-				((Person) element).surname = value.toString();
-			}
-
-		});
-
 		new ColumnViewerComparator(viewer, column) {
 
 			@Override
@@ -139,20 +80,6 @@ public class Main {
 			@Override
 			public String getText(Object element) {
 				return ((Person) element).email;
-			}
-
-		});
-
-		column.setEditingSupport(new AbstractEditingSupport(viewer) {
-
-			@Override
-			protected Object getValue(Object element) {
-				return ((Person) element).email;
-			}
-
-			@Override
-			protected void doSetValue(Object element, Object value) {
-				((Person) element).email = value.toString();
 			}
 
 		});
@@ -183,8 +110,7 @@ public class Main {
 	}
 
 	private Person[] createModel() {
-		return new Person[] {
-				new Person("Tom", "Schindl", "tom.schindl@bestsolution.at"),
+		return new Person[] { new Person("Tom", "Schindl", "tom.schindl@bestsolution.at"),
 				new Person("Boris", "Bokowski", "Boris_Bokowski@ca.ibm.com"),
 				new Person("Tod", "Creasey", "Tod_Creasey@ca.ibm.com"),
 				new Person("Wayne", "Beaton", "wayne@eclipse.org"),
@@ -274,6 +200,7 @@ public class Main {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
+		
 		display.dispose();
 	}
 
