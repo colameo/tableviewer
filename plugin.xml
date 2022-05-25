@@ -22,7 +22,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="tableviewer.Snippet040TableViewerSorting"
+            class="tableviewer.Main"
             name="View"
             id="tableviewer.view"
             inject="true">
