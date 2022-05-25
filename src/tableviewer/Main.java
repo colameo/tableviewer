@@ -18,13 +18,13 @@ import org.eclipse.swt.widgets.Table;
 public class Main {
 
 	public static class Person {
-		public String givenname;
-		public String surname;
+		public String firstname;
+		public String lastname;
 		public String email;
 
 		public Person(String givenname, String surname, String email) {
-			this.givenname = givenname;
-			this.surname = surname;
+			this.firstname = givenname;
+			this.lastname = surname;
 			this.email = email;
 		}
 	}
@@ -33,32 +33,35 @@ public class Main {
 		TableViewer viewer = new TableViewer(shell, SWT.BORDER | SWT.FULL_SELECTION);
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 
-		TableViewerColumn column = createColumnFor(viewer, "Givenname");
+		TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+		column.getColumn().setWidth(200);
+		column.getColumn().setText("Firstname");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
 			public String getText(Object element) {
-				return ((Person) element).givenname;
+				return ((Person) element).firstname;
 			}
 		});
 
-		ColumnViewerComparator cSorter = new ColumnViewerComparator(viewer, column) {
+		ColumnViewerComparator comparator = new ColumnViewerComparator(viewer, column) {
 
 			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+			public int compare(Viewer viewer, Object e1, Object e2) {
 				Person p1 = (Person) e1;
 				Person p2 = (Person) e2;
-				return p1.givenname.compareToIgnoreCase(p2.givenname);
+				return p1.firstname.compareToIgnoreCase(p2.firstname) * direction;
 			}
-
 		};
 
-		column = createColumnFor(viewer, "Surname");
+		column = new TableViewerColumn(viewer, SWT.NONE);
+		column.getColumn().setWidth(200);
+		column.getColumn().setText("Lastname");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
 			public String getText(Object element) {
-				return ((Person) element).surname;
+				return ((Person) element).lastname;
 			}
 
 		});
@@ -66,66 +69,52 @@ public class Main {
 		new ColumnViewerComparator(viewer, column) {
 
 			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+			public int compare(Viewer viewer, Object e1, Object e2) {
 				Person p1 = (Person) e1;
 				Person p2 = (Person) e2;
-				return p1.surname.compareToIgnoreCase(p2.surname);
+				return p1.lastname.compareToIgnoreCase(p2.lastname) * direction;
 			}
-
 		};
 
-		column = createColumnFor(viewer, "E-Mail");
+		column = new TableViewerColumn(viewer, SWT.NONE);
+		column.getColumn().setWidth(200);
+		column.getColumn().setText("E-Mail");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
 			public String getText(Object element) {
 				return ((Person) element).email;
 			}
-
 		});
 
 		new ColumnViewerComparator(viewer, column) {
 
 			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+			public int compare(Viewer viewer, Object e1, Object e2) {
 				Person p1 = (Person) e1;
 				Person p2 = (Person) e2;
-				return p1.email.compareToIgnoreCase(p2.email);
+				return p1.email.compareToIgnoreCase(p2.email) * direction;
 			}
-
 		};
 
-		viewer.setInput(createModel());
+		Person[] persons = new Person[] { 
+				new Person("Tomas", "Basel", "tb@mail.com"), 
+				new Person("Boris", "Beck", "bb@foo.com"),
+				new Person("Teodor", "Creas", "Tod_Creas@td.com"), 
+				new Person("Wayne", "Bob", "wb@eclipse.org"),
+				new Person("Mario", "Candido", "mario_c@gmail.com"),
+				new Person("Lars", "Meyer", "Lars.Meyerl@gmail.com"),
+				new Person("Hendrik", "Forth", "hendrik.forth@gmail.com") };
+		
+		viewer.setInput(persons);
 		viewer.getTable().setLinesVisible(true);
 		viewer.getTable().setHeaderVisible(true);
-		cSorter.setSorter(cSorter, ColumnViewerComparator.ASC);
-	}
-
-	private TableViewerColumn createColumnFor(TableViewer viewer, String label) {
-		TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setText(label);
-		column.getColumn().setMoveable(true);
-		return column;
-	}
-
-	private Person[] createModel() {
-		return new Person[] { new Person("Tom", "Schindl", "tom.schindl@bestsolution.at"),
-				new Person("Boris", "Bokowski", "Boris_Bokowski@ca.ibm.com"),
-				new Person("Tod", "Creasey", "Tod_Creasey@ca.ibm.com"),
-				new Person("Wayne", "Beaton", "wayne@eclipse.org"),
-				new Person("Jeanderson", "Candido", "jeandersonbc@gmail.com"),
-				new Person("Lars", "Vogel", "Lars.Vogel@gmail.com"),
-				new Person("Hendrik", "Still", "hendrik.still@gammas.de") };
+		viewer.setComparator(comparator);
 	}
 
 	private static abstract class ColumnViewerComparator extends ViewerComparator {
 
-		public static final int ASC = 1;
-		public static final int NONE = 0;
-		public static final int DESC = -1;
-
-		private int direction = 0;
+		int direction = 1;
 		private TableViewerColumn column;
 		private ColumnViewer viewer;
 
@@ -141,66 +130,31 @@ public class Main {
 
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if (ColumnViewerComparator.this.viewer.getComparator() != null) {
-						if (ColumnViewerComparator.this.viewer.getComparator() == ColumnViewerComparator.this) {
-							int tdirection = ColumnViewerComparator.this.direction;
-							if (tdirection == ASC) {
-								setSorter(ColumnViewerComparator.this, DESC);
-							} else if (tdirection == DESC) {
-								setSorter(ColumnViewerComparator.this, NONE);
-							}
-						} else {
-							setSorter(ColumnViewerComparator.this, ASC);
-						}
-					} else {
-						setSorter(ColumnViewerComparator.this, ASC);
-					}
+					Table table = column.getColumn().getParent();
+					table.setSortColumn(column.getColumn());
+					ColumnViewerComparator.this.direction = direction * -1;
+					table.setSortDirection(direction == 1 ? SWT.DOWN : SWT.UP);
+					viewer.refresh();
+					viewer.setComparator(ColumnViewerComparator.this);
 				}
 			};
 		}
-
-		public void setSorter(ColumnViewerComparator sorter, int direction) {
-			Table columnParent = column.getColumn().getParent();
-			if (direction == NONE) {
-				columnParent.setSortColumn(null);
-				columnParent.setSortDirection(SWT.NONE);
-				viewer.setComparator(null);
-
-			} else {
-				columnParent.setSortColumn(column.getColumn());
-				sorter.direction = direction;
-				columnParent.setSortDirection(direction == ASC ? SWT.DOWN : SWT.UP);
-
-				if (viewer.getComparator() == sorter) {
-					viewer.refresh();
-				} else {
-					viewer.setComparator(sorter);
-				}
-
-			}
-		}
-
-		@Override
-		public int compare(Viewer viewer, Object e1, Object e2) {
-			return direction * doCompare(viewer, e1, e2);
-		}
-
-		protected abstract int doCompare(Viewer viewer, Object e1, Object e2);
 	}
 
 	public static void main(String[] args) {
 		Display display = new Display();
-
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
+
 		new Main(shell);
 		shell.open();
 
 		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
 		}
-		
+
 		display.dispose();
 	}
 
