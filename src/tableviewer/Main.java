@@ -38,7 +38,6 @@ public class Main {
 		tvc1.getColumn().setWidth(200);
 		tvc1.getColumn().setText("Firstname");
 		tvc1.setLabelProvider(new ColumnLabelProvider() {
-
 			@Override
 			public String getText(Object element) {
 				return ((Person) element).firstname;
@@ -46,7 +45,6 @@ public class Main {
 		});
 
 		ColumnViewerComparator comparator = new ColumnViewerComparator(tv, tvc1) {
-
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				Person p1 = (Person) e1;
@@ -59,16 +57,13 @@ public class Main {
 		tvc2.getColumn().setWidth(200);
 		tvc2.getColumn().setText("Lastname");
 		tvc2.setLabelProvider(new ColumnLabelProvider() {
-
 			@Override
 			public String getText(Object element) {
 				return ((Person) element).lastname;
 			}
-
 		});
 
 		new ColumnViewerComparator(tv, tvc2) {
-
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				Person p1 = (Person) e1;
@@ -81,7 +76,6 @@ public class Main {
 		tvc3.getColumn().setWidth(200);
 		tvc3.getColumn().setText("E-Mail");
 		tvc3.setLabelProvider(new ColumnLabelProvider() {
-
 			@Override
 			public String getText(Object element) {
 				return ((Person) element).email;
@@ -89,7 +83,6 @@ public class Main {
 		});
 
 		new ColumnViewerComparator(tv, tvc3) {
-
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				Person p1 = (Person) e1;
@@ -135,7 +128,6 @@ public class Main {
 		
 		private SelectionAdapter createSelectionAdapter(ColumnViewerComparator parent) {
 			return new SelectionAdapter() {
-
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					Table table = tvc.getColumn().getParent();
@@ -165,5 +157,4 @@ public class Main {
 
 		display.dispose();
 	}
-
 }
