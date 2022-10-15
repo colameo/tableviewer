@@ -98,14 +98,15 @@ public class Main {
 			}
 		};
 
-		Person[] persons = new Person[] { 
-				new Person("Tomas", "Basel", "tb@mail.com"), 
-				new Person("Boris", "Beck", "bb@foo.com"),
-				new Person("Teodor", "Creas", "Tod_Creas@td.com"), 
-				new Person("Wayne", "Bob", "wb@eclipse.org"),
-				new Person("Mario", "Candido", "mario_c@gmail.com"),
-				new Person("Lars", "Meyer", "Lars.Meyerl@gmail.com"),
-				new Person("Hendrik", "Forth", "hendrik.forth@gmail.com") };
+		Person[] persons = new Person[] {
+			new Person("Tomas", "Basel", "tb@mail.com"), 
+			new Person("Boris", "Beck", "bb@foo.com"),
+			new Person("Teodor", "Creas", "Tod_Creas@td.com"), 
+			new Person("Wayne", "Bob", "wb@eclipse.org"),
+			new Person("Mario", "Candido", "mario_c@gmail.com"),
+			new Person("Lars", "Meyer", "Lars.Meyerl@gmail.com"),
+			new Person("Hendrik", "Forth", "hendrik.forth@gmail.com") 
+		};
 		
 		tv.setInput(persons);
 		tv.getTable().setLinesVisible(true);
@@ -114,7 +115,6 @@ public class Main {
 	}
 
 	static class ColumnViewerComparator extends ViewerComparator {
-
 		int direction = 1;
 		private TableViewerColumn tvc;
 		private ColumnViewer cv;
@@ -130,7 +130,7 @@ public class Main {
 		}
 		
 		private void changeDirection() {
-			direction = direction * -1;
+			direction *= -1;
 		}
 		
 		private SelectionAdapter createSelectionAdapter(ColumnViewerComparator parent) {
