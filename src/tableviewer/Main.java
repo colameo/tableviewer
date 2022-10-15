@@ -91,16 +91,16 @@ public class Main {
 			}
 		};
 
-		Person[] persons = new Person[] {
-			new Person("Tomas", "Basel", "tb@mail.com"), 
-			new Person("Boris", "Beck", "bb@foo.com"),
-			new Person("Teodor", "Creas", "Tod_Creas@td.com"), 
-			new Person("Wayne", "Bob", "wb@eclipse.org"),
+		Person[] persons = new Person[] { 
+			new Person("Tomas", "Basel", "tb@mail.com"),
+			new Person("Boris", "Beck", "bb@foo.com"), 
+			new Person("Teodor", "Creas", "Tod_Creas@td.com"),
+			new Person("Wayne", "Bob", "wb@eclipse.org"), 
 			new Person("Mario", "Candido", "mario_c@gmail.com"),
 			new Person("Lars", "Meyer", "Lars.Meyerl@gmail.com"),
 			new Person("Hendrik", "Forth", "hendrik.forth@gmail.com") 
 		};
-		
+
 		tv.setInput(persons);
 		tv.getTable().setLinesVisible(true);
 		tv.getTable().setHeaderVisible(true);
@@ -121,11 +121,11 @@ public class Main {
 		private TableColumn getColumn() {
 			return tvc.getColumn();
 		}
-		
+
 		private void changeDirection() {
 			direction *= -1;
 		}
-		
+
 		private SelectionAdapter createSelectionAdapter(ColumnViewerComparator parent) {
 			return new SelectionAdapter() {
 				@Override
