@@ -14,6 +14,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 public class Main {
 
@@ -30,13 +31,13 @@ public class Main {
 	}
 
 	public Main(Shell shell) {
-		TableViewer viewer = new TableViewer(shell, SWT.BORDER | SWT.FULL_SELECTION);
-		viewer.setContentProvider(ArrayContentProvider.getInstance());
+		TableViewer tv = new TableViewer(shell, SWT.BORDER | SWT.FULL_SELECTION);
+		tv.setContentProvider(ArrayContentProvider.getInstance());
 
-		TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setText("Firstname");
-		column.setLabelProvider(new ColumnLabelProvider() {
+		TableViewerColumn tvc1 = new TableViewerColumn(tv, SWT.NONE);
+		tvc1.getColumn().setWidth(200);
+		tvc1.getColumn().setText("Firstname");
+		tvc1.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
 			public String getText(Object element) {
@@ -44,7 +45,7 @@ public class Main {
 			}
 		});
 
-		ColumnViewerComparator comparator = new ColumnViewerComparator(viewer, column) {
+		ColumnViewerComparator comparator = new ColumnViewerComparator(tv, tvc1) {
 
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
@@ -54,10 +55,10 @@ public class Main {
 			}
 		};
 
-		column = new TableViewerColumn(viewer, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setText("Lastname");
-		column.setLabelProvider(new ColumnLabelProvider() {
+		TableViewerColumn tvc2 = new TableViewerColumn(tv, SWT.NONE);
+		tvc2.getColumn().setWidth(200);
+		tvc2.getColumn().setText("Lastname");
+		tvc2.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
 			public String getText(Object element) {
@@ -66,7 +67,7 @@ public class Main {
 
 		});
 
-		new ColumnViewerComparator(viewer, column) {
+		new ColumnViewerComparator(tv, tvc2) {
 
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
@@ -76,10 +77,10 @@ public class Main {
 			}
 		};
 
-		column = new TableViewerColumn(viewer, SWT.NONE);
-		column.getColumn().setWidth(200);
-		column.getColumn().setText("E-Mail");
-		column.setLabelProvider(new ColumnLabelProvider() {
+		TableViewerColumn tvc3 = new TableViewerColumn(tv, SWT.NONE);
+		tvc3.getColumn().setWidth(200);
+		tvc3.getColumn().setText("E-Mail");
+		tvc3.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
 			public String getText(Object element) {
@@ -87,7 +88,7 @@ public class Main {
 			}
 		});
 
-		new ColumnViewerComparator(viewer, column) {
+		new ColumnViewerComparator(tv, tvc3) {
 
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
@@ -106,36 +107,43 @@ public class Main {
 				new Person("Lars", "Meyer", "Lars.Meyerl@gmail.com"),
 				new Person("Hendrik", "Forth", "hendrik.forth@gmail.com") };
 		
-		viewer.setInput(persons);
-		viewer.getTable().setLinesVisible(true);
-		viewer.getTable().setHeaderVisible(true);
-		viewer.setComparator(comparator);
+		tv.setInput(persons);
+		tv.getTable().setLinesVisible(true);
+		tv.getTable().setHeaderVisible(true);
+		tv.setComparator(comparator);
 	}
 
-	private static abstract class ColumnViewerComparator extends ViewerComparator {
+	static class ColumnViewerComparator extends ViewerComparator {
 
 		int direction = 1;
-		private TableViewerColumn column;
-		private ColumnViewer viewer;
+		private TableViewerColumn tvc;
+		private ColumnViewer cv;
 
-		public ColumnViewerComparator(ColumnViewer viewer, TableViewerColumn column) {
-			this.column = column;
-			this.viewer = viewer;
-			SelectionAdapter selectionAdapter = createSelectionAdapter();
-			this.column.getColumn().addSelectionListener(selectionAdapter);
+		public ColumnViewerComparator(ColumnViewer cv, TableViewerColumn tvc) {
+			this.cv = cv;
+			this.tvc = tvc;
+			getColumn().addSelectionListener(createSelectionAdapter(this));
 		}
 
-		private SelectionAdapter createSelectionAdapter() {
+		private TableColumn getColumn() {
+			return tvc.getColumn();
+		}
+		
+		private void changeDirection() {
+			direction = direction * -1;
+		}
+		
+		private SelectionAdapter createSelectionAdapter(ColumnViewerComparator parent) {
 			return new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					Table table = column.getColumn().getParent();
-					table.setSortColumn(column.getColumn());
-					ColumnViewerComparator.this.direction = direction * -1;
+					Table table = tvc.getColumn().getParent();
+					table.setSortColumn(tvc.getColumn());
+					changeDirection();
 					table.setSortDirection(direction == 1 ? SWT.DOWN : SWT.UP);
-					viewer.refresh();
-					viewer.setComparator(ColumnViewerComparator.this);
+					cv.setComparator(parent);
+					cv.refresh();
 				}
 			};
 		}
